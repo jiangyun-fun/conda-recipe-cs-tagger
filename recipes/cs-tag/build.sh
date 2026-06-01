@@ -11,7 +11,7 @@ export LIBCLANG_PATH="${BUILD_PREFIX}/lib"
 rm -f cs-tag/Cargo.lock
 
 # Download all crates first so we can patch them before compilation
-cargo fetch --path cs-tag
+cargo fetch --manifest-path cs-tag/Cargo.toml
 
 # rust-htslib 1.0.0 hardcodes features = ["bindgen"] on hts-sys.
 # This forces bindgen to run at build time, which produces opaque

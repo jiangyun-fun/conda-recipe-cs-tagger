@@ -20,9 +20,17 @@ requirements:
     - ${{ compiler('c') }}
     - ${{ compiler('rust') }}
     - cargo-bundle-licenses
+    - cmake
     - make
+    - pkg-config
     - clang
     - libclang
+  host:
+    - zlib
+    - bzip2
+    - liblzma-devel
+    - openssl
+    - libcurl
 
 tests:
   - script:

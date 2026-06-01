@@ -8,9 +8,11 @@ export CARGO_PROFILE_RELEASE_LTO=fat
 # Point bindgen to Conda's libclang.so
 export LIBCLANG_PATH="${BUILD_PREFIX}/lib"
 
-# Only pass sysroot to bindgen — conda's full CFLAGS (with -isystem, -fdebug-prefix-map, etc.)
-# interfere with hts-sys's bundled htslib header discovery by bindgen.
-export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=${BUILD_PREFIX}/${HOST}/sysroot"
+# Clear conda's BINDGEN_EXTRA_CLANG_ARGS — the cross-compilation sysroot
+# lacks standard C headers (stdint.h etc.), causing bindgen to generate
+# opaque struct bindings. Unsetting lets bindgen use the default compiler
+# search paths which DO have the system headers.
+unset BINDGEN_EXTRA_CLANG_ARGS
 
 # Remove upstream Cargo.lock — it was generated with hts-sys's "bindgen" feature
 # enabled, which causes bindgen to generate broken opaque bindings under conda's

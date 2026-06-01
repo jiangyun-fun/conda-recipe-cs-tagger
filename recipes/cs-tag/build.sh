@@ -25,14 +25,14 @@ PATCHED_SHA=$(sha256sum vendor/rust-htslib/Cargo.toml | cut -d' ' -f1)
 sed -i "s|\"Cargo.toml\":\"[a-f0-9]*\"|\"Cargo.toml\":\"${PATCHED_SHA}\"|" \
     vendor/rust-htslib/.cargo-checksum.json
 
-# Fix pre-built bindings type mismatches:
+# Fix pre-built bindings type mismatches between bindgen output and
+# what rust-htslib expects:
 # 1. size_t should be usize (not c_ulong/u64) to match rust-htslib usage
 # 2. bam1_core_t.isize should be isize_ to match rust-htslib field access
-BINDINGS=vendor/hts-sys-*/linux_prebuilt_bindings.rs
-sed -i 's/pub type size_t = ::std::os::raw::c_ulong;/pub type size_t = usize;/' $BINDINGS
-# Rename the isize field in bam1_core_t struct and its test
-sed -i 's/pub isize:/pub isize_:/' $BINDINGS
-sed -i 's/stringify!(isize)/stringify!(isize_)/' $BINDINGS
+BINDINGS=vendor/hts-sys/linux_prebuilt_bindings.rs
+sed -i 's/pub type size_t = ::std::os::raw::c_ulong;/pub type size_t = usize;/' "$BINDINGS"
+sed -i 's/pub isize:/pub isize_:/' "$BINDINGS"
+sed -i 's/stringify!(isize)/stringify!(isize_)/' "$BINDINGS"
 
 # Build from vendored deps
 cargo install --no-track --root "$PREFIX" --path .

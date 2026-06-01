@@ -20,11 +20,6 @@ cargo vendor vendor/ > .cargo/config.toml
 sed -i 's/features = \["bindgen"\]/features = []/' \
     vendor/rust-htslib/Cargo.toml
 
-# Update the checksum for the patched file so cargo doesn't reject it
-PATCHED_SHA=$(sha256sum vendor/rust-htslib/Cargo.toml | cut -d' ' -f1)
-sed -i "s|\"Cargo.toml\":\"[a-f0-9]*\"|\"Cargo.toml\":\"${PATCHED_SHA}\"|" \
-    vendor/rust-htslib/.cargo-checksum.json
-
 # Fix pre-built bindings type mismatches between bindgen output and
 # what rust-htslib expects:
 # 1. size_t should be usize (not c_ulong/u64) to match rust-htslib usage
@@ -33,6 +28,15 @@ BINDINGS=vendor/hts-sys/linux_prebuilt_bindings.rs
 sed -i 's/pub type size_t = ::std::os::raw::c_ulong;/pub type size_t = usize;/' "$BINDINGS"
 sed -i 's/pub isize:/pub isize_:/' "$BINDINGS"
 sed -i 's/stringify!(isize)/stringify!(isize_)/' "$BINDINGS"
+
+# Update checksums for all patched files
+for f in vendor/rust-htslib/Cargo.toml "$BINDINGS"; do
+    sha=$(sha256sum "$f" | cut -d' ' -f1)
+    base=$(basename "$f")
+    dir=$(dirname "$f")
+    sed -i "s|\"${base}\":\"[a-f0-9]*\"|\"${base}\":\"${sha}\"|" \
+        "${dir}/.cargo-checksum.json"
+done
 
 # Build from vendored deps
 cargo install --no-track --root "$PREFIX" --path .

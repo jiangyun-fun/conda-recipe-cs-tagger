@@ -14,11 +14,13 @@ export LIBCLANG_PATH="${BUILD_PREFIX}/lib"
 # search paths which DO have the system headers.
 unset BINDGEN_EXTRA_CLANG_ARGS
 
-# Remove upstream Cargo.lock — it was generated with hts-sys's "bindgen" feature
-# enabled, which causes bindgen to generate broken opaque bindings under conda's
-# cross-compilation environment. Removing it lets cargo resolve fresh with default
-# features (no bindgen), so hts-sys falls back to correct pre-built bindings.
+# Remove upstream Cargo.lock and patch rust-htslib to disable the "bindgen"
+# feature. rust-htslib 1.0.0 hardcodes features = ["bindgen"] for hts-sys,
+# which forces bindgen usage. Under conda's cross-compilation environment,
+# bindgen generates opaque struct bindings. Without bindgen, hts-sys uses
+# correct pre-built bindings.
 rm -f cs-tag/Cargo.lock
+sed -i 's/^rust-htslib = "1.0.0"/rust-htslib = { version = "1.0.0", default-features = false, features = ["bzip2", "lzma", "curl"] }/' cs-tag/Cargo.toml
 
 # build statically linked binary with Rust
 cargo install --no-track --root "$PREFIX" --path cs-tag

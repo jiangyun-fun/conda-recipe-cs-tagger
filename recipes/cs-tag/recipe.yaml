@@ -1,5 +1,5 @@
 context:
-  version: "0.2.1"
+  version: "0.2.2"
   name: cs-tag
 
 package:
@@ -8,7 +8,7 @@ package:
 
 source:
   url: https://github.com/jiangyun-fun/cs-tag/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: 700049af14118ca258d5013c4ecdd1d64ca6caa7066b943ebfc47e131d5bb63d
+  sha256: cb2bd6bc6d3714f6f6d4815e3ce282d6ceeef025ac7fe73807b8a2b8e2d206fe
 
 build:
   number: 0

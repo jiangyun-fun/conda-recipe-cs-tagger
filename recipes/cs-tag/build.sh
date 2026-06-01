@@ -12,11 +12,13 @@ export LIBCLANG_PATH="${BUILD_PREFIX}/lib"
 # interfere with hts-sys's bundled htslib header discovery by bindgen.
 export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=${BUILD_PREFIX}/${HOST}/sysroot"
 
+# Remove upstream Cargo.lock — it was generated with hts-sys's "bindgen" feature
+# enabled, which causes bindgen to generate broken opaque bindings under conda's
+# cross-compilation environment. Removing it lets cargo resolve fresh with default
+# features (no bindgen), so hts-sys falls back to correct pre-built bindings.
+rm -f cs-tag/Cargo.lock
+
 # build statically linked binary with Rust
-# Note: not using --locked because the upstream Cargo.lock enables the hts-sys
-# "bindgen" feature which generates broken bindings under conda's cross-compilation
-# environment. Without --locked, Cargo uses default features (no bindgen) and
-# hts-sys falls back to pre-built bindings that work correctly.
 cargo install --no-track --root "$PREFIX" --path cs-tag
 
 cd cs-tag && cargo-bundle-licenses --format yaml --output "${SRC_DIR}/cs-tag/THIRDPARTY.yml"

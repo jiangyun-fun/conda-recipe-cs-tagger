@@ -14,14 +14,19 @@ rm -f cs-tag/Cargo.lock
 cargo fetch --manifest-path cs-tag/Cargo.toml
 
 # rust-htslib 1.0.0 hardcodes features = ["bindgen"] on hts-sys.
-# This forces bindgen to run at build time, which produces opaque
-# struct bindings in conda's cross-compilation environment.
 # Patch the downloaded rust-htslib Cargo.toml to remove bindgen,
 # so hts-sys uses its pre-built bindings instead.
-sed -i 's/features = \["bindgen"\]/features = []/' \
-    "${CARGO_HOME}/registry/src/index.crates.io-"*/rust-htslib-1.0.0/Cargo.toml
+# Also ensure compression features are passed through.
+HTSLIB_TOML="${CARGO_HOME}/registry/src/index.crates.io-"*/rust-htslib-1.0.0/Cargo.toml
+# shellcheck disable=SC2086
+sed -i 's/features = \["bindgen"\]/features = []/' $HTSLIB_TOML
 
-cargo install --no-track --root "$PREFIX" --path cs-tag
+# Debug: verify the patch applied
+# shellcheck disable=SC2086
+grep -A3 '\[dependencies.hts-sys\]' $HTSLIB_TOML
+
+# Build in offline mode to use patched registry cache
+cargo install --offline --no-track --root "$PREFIX" --path cs-tag
 
 cd cs-tag
 cargo-bundle-licenses --format yaml --output "${SRC_DIR}/cs-tag/THIRDPARTY.yml"

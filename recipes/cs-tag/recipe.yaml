@@ -47,8 +47,8 @@ about:
     into the output BAM.
   license: MIT
   license_file:
-    - ../LICENSE
-    - THIRDPARTY.yml
+    - LICENSE
+    - cs-tag/THIRDPARTY.yml
   repository: https://github.com/jiangyun-fun/cs-tag
 
 extra:

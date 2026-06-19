@@ -1,14 +1,14 @@
 context:
-  version: "0.2.2"
-  name: cs-tag
+  version: "0.3.0"
+  name: cs-tagger
 
 package:
   name: ${{ name|lower }}
   version: ${{ version }}
 
 source:
-  url: https://github.com/jiangyun-fun/cs-tag/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: cb2bd6bc6d3714f6f6d4815e3ce282d6ceeef025ac7fe73807b8a2b8e2d206fe
+  url: https://github.com/jiangyun-fun/cs-tagger/archive/refs/tags/v${{ version }}.tar.gz
+  sha256: bd3b3753e21d7077f2cfe118bbd9dde142cbf1611f26bebd65edbd516c5d4586
 
 build:
   number: 0
@@ -34,11 +34,11 @@ requirements:
 
 tests:
   - script:
-      - cs-tag --help
-      - cs-tag --version
+      - cs-tagger --help
+      - cs-tagger --version
 
 about:
-  homepage: https://github.com/jiangyun-fun/cs-tag
+  homepage: https://github.com/jiangyun-fun/cs-tagger
   summary: Generate minimap2-like CS tags for BAM files
   description: |
     CS tags encode the alignment between query and reference sequences in a
@@ -48,8 +48,8 @@ about:
   license: MIT
   license_file:
     - LICENSE
-    - cs-tag/THIRDPARTY.yml
-  repository: https://github.com/jiangyun-fun/cs-tag
+    - cs-tagger/THIRDPARTY.yml
+  repository: https://github.com/jiangyun-fun/cs-tagger
 
 extra:
   recipe-maintainers:

@@ -8,7 +8,7 @@ export CARGO_PROFILE_RELEASE_LTO=fat
 export LIBCLANG_PATH="${BUILD_PREFIX}/lib"
 
 # Vendor all dependencies locally so we can patch them
-cd cs-tag
+cd cs-tagger
 mkdir -p .cargo
 cargo vendor vendor/ > .cargo/config.toml
 
@@ -41,4 +41,4 @@ done
 # Build from vendored deps
 cargo install --no-track --root "$PREFIX" --path .
 
-cargo-bundle-licenses --format yaml --output "${SRC_DIR}/cs-tag/THIRDPARTY.yml"
+cargo-bundle-licenses --format yaml --output "${SRC_DIR}/cs-tagger/THIRDPARTY.yml"

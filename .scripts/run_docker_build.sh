@@ -54,7 +54,14 @@ fi
 ( startgroup "Start Docker" ) 2> /dev/null
 # this group is closed in build_steps.sh
 
-docker pull "${DOCKER_IMAGE}"
+# Pull only when the image is missing locally. The image is large and the
+# registry (quay.io) is reached through a flaky proxy; an unconditional pull
+# fails the whole build on a transient EOF even though the image is cached.
+if ! docker image inspect "${DOCKER_IMAGE}" >/dev/null 2>&1; then
+    docker pull "${DOCKER_IMAGE}"
+elif ! docker pull "${DOCKER_IMAGE}" 2>/dev/null; then
+    echo "WARNING: docker pull failed (continuing with cached image ${DOCKER_IMAGE})"
+fi
 docker run ${DOCKER_RUN_ARGS} \
            -v "${REPO_ROOT}:/home/conda/staged-recipes" \
            -e HOST_USER_ID=${HOST_USER_ID} \
